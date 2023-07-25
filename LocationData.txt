@@ -1,0 +1,2 @@
+Kuala Lumpur,101.22,12.5
+Melbourne,9.12,3.223
