@@ -1,2 +1,3 @@
 Kuala Lumpur,101.22,12.5
 Melbourne,9.12,3.223
+New York,101.23,11.2
