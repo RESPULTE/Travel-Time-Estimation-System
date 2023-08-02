@@ -1,1 +1,2 @@
-motowewe,100.0
+Plane,10.0
+Toyota,1000.0

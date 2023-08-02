@@ -1,16 +1,8 @@
 from math import radians, cos, sin, asin, sqrt
-
 from utils import prompt_user_to_confirm
+
+from settings import *
 from data import *
-
-WELCOME_MESSAGE = """
------------------------------------------
- Welcome to Personal Travel Assistance !
------------------------------------------
-"""
-
-LOCATIONDATA_FILENAME = "LocationData.txt"
-TRANSPORTDATA_FILENAME = "TransportData.txt"
 
 
 def calculate_distance(start: LocationData, dest: LocationData):
@@ -84,29 +76,34 @@ def run_simulation():
 
 def main():
     # loading the data from the file into the database
-    with open(LOCATIONDATA_FILENAME, "r") as f:
-        LocationData.database = [LocationData(*line.split(",")) for line in f.read().split("\n")[:-1]]
+    LocationData.database = read_database(LOCATIONDATA_FILENAME, LocationData)
+    TransportData.database = read_database(TRANSPORTDATA_FILENAME, TransportData)
 
-    with open(TRANSPORTDATA_FILENAME, "r") as f:
-        TransportData.database = [TransportData(*line.split(",")) for line in f.read().split("\n")[:-1]]
+    print_welcome = True
 
     while True:
-        print(WELCOME_MESSAGE)
+        if print_welcome:
+            print_message(WELCOME_MSG)
+            print_welcome = False
 
         cmd = prompt_input(
-            "1: start simulation   2: location    3. Transport    4. Exit\n", lambda x: x in ["1", "2", "3", "4"]
+            "1: start simulation   2: location    3. Transport    4. Exit\n",
+            "command",
+            lambda x: x in ["1", "2", "3", "4"],
         )
 
         if cmd == "1":
+            # skipping the print welcome message using 'continue'
             if not TransportData.database:
-                print("Please add a transport to be used")
+                print_message("Please add a transport to be used")
                 continue
 
             if len(LocationData.database) < 2:
-                print("Please add at least 2 Location to travel to-and-fro")
+                print_message("Please add at least 2 Location to travel to-and-fro")
                 continue
 
             run_simulation()
+
         elif cmd == "2":
             LocationData.handle_data_manipulation(LOCATIONDATA_FILENAME)
         elif cmd == "3":
@@ -114,7 +111,7 @@ def main():
         else:
             break
 
-    pass
+        print_welcome = True
 
 
 if __name__ == "__main__":
