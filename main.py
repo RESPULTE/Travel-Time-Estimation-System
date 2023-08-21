@@ -33,26 +33,22 @@ def run_simulation():
     """
     while True:
         # displaying the table of all locations for the user to choose
-        table_len = 3 + 5 + 50
-        print("-" * table_len)
-        print(f"|{'no.'.center(5)}|{'Location'.center(50)}|")
-        print("-" * table_len)
-        for i, vloc in enumerate(LocationData.database, 1):
-            print(f"|{(str(i) + '.').center(5)}|{vloc.name.center(50)}|")
-            print("-" * table_len)
+
+        print_table(["Location"], [loc.name for loc in LocationData.database])
 
         # prompting the user to choose the starting and ending location
-        start_loc: LocationData = LocationData.database[LocationData.get_valid_index(msg="starting location") - 1]
-        dest_loc: LocationData = LocationData.database[LocationData.get_valid_index(msg="destination") - 1]
+        starting_loc_num = LocationData.get_valid_index(msg="starting location")
+        start_loc = LocationData.database[starting_loc_num - 1]
+
+        destination_loc_num = LocationData.get_valid_index(msg="destination")
+        while destination_loc_num == starting_loc_num:
+            print_message("Please choose a different location!")
+            destination_loc_num = LocationData.get_valid_index(msg="destination")
+
+        dest_loc = LocationData.database[destination_loc_num - 1]
 
         # displaying the table of all transport for the user to choose
-        table_len = 4 + 5 + 50 + 15
-        print("-" * table_len)
-        print(f"|{'no.'.center(5)}|{'Transport'.center(50)}|{'Speed (KM/h)'.center(15)}|")
-        print("-" * table_len)
-        for i, vtrans in enumerate(TransportData.database, 1):
-            print(f"|{(str(i) + '.').center(5)}|{str(vtrans.name).center(50)}|{str(vtrans.speed).center(15)}|")
-        print("-" * table_len)
+        TransportData.print_database()
 
         # prompting the user to choose the transport
         transport: TransportData = TransportData.database[
@@ -61,16 +57,19 @@ def run_simulation():
 
         distance = calculate_distance(start_loc, dest_loc)
         time = distance / transport.speed
+        time_min = int(time % 1 * 60)
+        time_hrs = int(time)
 
         # displaying the result of calculation
-        print("\n")
-        print("-" * 40)
-        print(f"distance        : {round(distance, 2)}  KM")
-        print(f"estimated time  : {round(time, 2)}  hours")
-        print("-" * 40)
-        print("\n")
+        print_message(
+            f"| {start_loc.name} |    ---------- {transport.name} ---------->     | {dest_loc.name} |",
+            "",
+            f"   distance        : {round(distance, 2)}  KM",
+            f"   estimated time  : {time_hrs} hours {time_min} minutes",
+            formatting=str.ljust,
+        )
 
-        if prompt_user_to_confirm("exit the simulation"):
+        if prompt_user_to_confirm("Do you want to continue the simulation?", "N"):
             break
 
 

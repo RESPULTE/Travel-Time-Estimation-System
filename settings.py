@@ -8,8 +8,11 @@ SKIPABLE_MSG = "[press *Enter* to skip]\n"
 NO_DATA_MSG = "No Data to Display :("
 
 # These are used for the formatting of the table
-NAME_LEN = 50
-VALUE_LEN = 15  # example: speed, latitude and longitude
+DATA_LEN = 50
 INDEX_NUM_LEN = 5
 
-MSG_PADDING = 6
+MSG_PADDING = 5
+INDEX_NAME = "no."
+
+PILLAR = "|+|"
+PILLAR_LEN = len(PILLAR)

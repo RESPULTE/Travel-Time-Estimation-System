@@ -70,7 +70,7 @@ class Data(ABC):
 
             elif cmd == "2":
                 if len(cls.database) == 0:
-                    print("nothing to edit")
+                    print_message("nothing to edit")
                     continue
 
                 # get the data to edit using the index given by the user
@@ -78,7 +78,7 @@ class Data(ABC):
                 data = cls.database[index - 1]
 
                 # prompt the user to confirm the decision to change the selected data
-                if not prompt_user_to_confirm(f"edit '{data.name}'"):
+                if not prompt_user_to_confirm(f"Confirm to edit edit '{data.name}' ?"):
                     continue
 
                 data.update()
@@ -86,14 +86,14 @@ class Data(ABC):
 
             elif cmd == "3":
                 if len(cls.database) == 0:
-                    print("nothing to delete")
+                    print_message("nothing to delete")
                     continue
 
                 # prompt and confirms with the user about the index of the data to delete
                 index = cls.get_valid_index(msg="data to delete")
                 data = cls.database[index - 1]
-                if not prompt_user_to_confirm(f"delete '{data.name}'"):
-                    return
+                if not prompt_user_to_confirm(f"Confirm to delete '{data.name}' ?"):
+                    continue
 
                 # remove the deleted data from the database
                 cls.database.remove(data)
@@ -151,29 +151,20 @@ class TransportData(Data):
         This function is used to print out the database in a table-like format
         """
 
-        # This block of code is used for formatting and printing the table's header
-        # 4 for the 4 "|" character
-        table_len = 4 + INDEX_NUM_LEN + NAME_LEN + VALUE_LEN
-        print("\n" + "-" * table_len)
-        print(
-            f"|{'No. '.center(INDEX_NUM_LEN)}|{'Name of Transport'.center(NAME_LEN)}|{'Speed (KM/h)'.center(VALUE_LEN)}|"
-        )
-        print("-" * table_len)
-
         # check if there's any data in the database, if not just print 'no data'
         if not TransportData.database:
-            # the 2 is for the 2 "|" symbol
-            print(f"|{NO_DATA_MSG.center(table_len-2)}|")
-            print("-" * table_len)
+            print_message(NO_DATA_MSG)
             return
 
-        # This is looping through all data, and then formatting them and printing out each one
-        for i, trans in enumerate(TransportData.database, 1):
-            index_num = f"{i}."
-            speed = f"{trans.speed:.2f}"
-            print(f"|{index_num.center(INDEX_NUM_LEN)}|{trans.name.center(NAME_LEN)}|{speed.center(VALUE_LEN)}|")
+        TransportData.database.sort(key=lambda trans: trans.speed)
 
-        print("-" * table_len)
+        name_list = []
+        speed_list = []
+        for trans in cls.database:
+            name_list.append(f"{trans.name}")
+            speed_list.append(f"{trans.speed:>8.2f}")
+
+        print_table(["Transport", "Speed (KM/h)"], name_list, speed_list)
 
     def to_file(self):
         """
@@ -230,44 +221,34 @@ class LocationData(Data):
         This function is used to print out the database in a table-like format
         """
 
-        # This block of code is used for formatting and printing the table's header
-        # 5 is for the 5 "|" characters
-        table_len = 5 + INDEX_NUM_LEN + NAME_LEN + VALUE_LEN + VALUE_LEN
-        print("\n" + "-" * table_len)
-        print(
-            f"|{'No. '.center(INDEX_NUM_LEN)}|{'Name of Location'.center(NAME_LEN)}|{'Latitude'.center(VALUE_LEN)}|{'Longitude'.center(VALUE_LEN)}|"
-        )
-        print("-" * table_len)
-
         # check if there's any data in the database, if not just print 'no data'
         if not LocationData.database:
-            # the 2 is for the 2 "|" symbol
-            print(f"|{NO_DATA_MSG.center(table_len-2)}|")
-            print("-" * table_len)
+            print_message(NO_DATA_MSG)
             return
 
-        # This is looping through all data, and then formatting them and printing out each one
-        for i, loc in enumerate(LocationData.database, 1):
-            index_num = f"{i}."
-            name = loc.name
+        LocationData.database.sort(key=lambda loc: loc.name)
 
+        # This is looping through all data, and then formatting them and printing out each one
+        lon_list = []
+        lat_list = []
+        name_list = []
+        for loc in LocationData.database:
+            name_list.append(loc.name)
             if loc.latitude > 0:
                 latitude = f"{loc.latitude:>8.4f}  N"
             else:
                 # The negative is just to make it positive when it is printed out
                 latitude = f"{-loc.latitude:>8.4f}  S"
+            lat_list.append(latitude)
 
             if loc.longitude > 0:
                 longitude = f"{loc.longitude:>8.4f}  E"
             else:
                 # The negative is just to make it positive when it is printed out
                 longitude = f"{-loc.longitude:>8.4f}  W"
+            lon_list.append(longitude)
 
-            print(
-                f"|{index_num.center(INDEX_NUM_LEN)}|{name.center(NAME_LEN)}|{latitude.center(VALUE_LEN)}|{longitude.center(VALUE_LEN)}|"
-            )
-
-        print("-" * table_len)
+        print_table(["Location", "Latitude", "Longitude"], name_list, lat_list, lon_list)
 
     def to_file(self):
         """
@@ -318,7 +299,7 @@ class LocationData(Data):
         long_data = prompt_input(
             f"Please input location's longitude (example: 101.6841E) : ",
             "Coordinate (example: 101.6841E)",
-            lambda x: x[1] in ["W", "E"],
+            checker=lambda x: x[1] in ["W", "E"],
             func=lambda x: (float(x[:-1]), x[-1]),
             skipable=skip,
         )

@@ -1,2 +1,6 @@
-Plane,10.0
-Toyota,1000.0
+Walking,5.0
+Toyota Camry,183.0
+jet,900.0
+Motorbike,137.0
+Running,10.0
+Lamborghini Aventador,350.0
