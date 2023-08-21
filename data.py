@@ -45,6 +45,9 @@ class Data(ABC):
 
     @classmethod
     def write_to_database(cls, filename):
+        """
+        Just a simple function to write data into a given file by using the 'to_file()' method of data
+        """
         with open(filename, "w") as f:
             for data in cls.database:
                 f.write(data.to_file())
@@ -59,7 +62,12 @@ class Data(ABC):
         while True:
             cls.print_database()
 
-            cmd = prompt_input(DATA_MANIPULATION_MENU, "command", lambda x: x in ["1", "2", "3", "4"])
+            cmd = prompt_input(
+                DATA_MANIPULATION_MENU,
+                "command",
+                "Please input either 1, 2, 3 or 4 as the command",
+                lambda x: x in ["1", "2", "3", "4"],
+            )
 
             # creates a new data, write it to file and then add it to the database
             if cmd == "1":
@@ -113,7 +121,8 @@ class Data(ABC):
         return prompt_input(
             f"Please input new {cls.__name__.removesuffix('Data')}'s name:  ",
             "name",
-            lambda x: x not in [i.name for i in cls.database] and x != "",
+            f"Please do not leave the name blank or use the character '{DELIMITER}' in your name of choice",
+            lambda x: x not in [i.name for i in cls.database] and x not in (DELIMITER, ""),
             skipable=skip,
         )
 
@@ -124,7 +133,11 @@ class Data(ABC):
         """
 
         return prompt_input(
-            f"Please input the index of the {msg}:  ", "index", lambda x: 1 <= x <= len(cls.database), func=int
+            f"Please input the index of the {msg}:  ",
+            "index",
+            "Please input a number that is present in the column 'no' ",
+            lambda x: 1 <= x <= len(cls.database),
+            func=int,
         )
 
 
@@ -170,7 +183,7 @@ class TransportData(Data):
         """
         This is the string representation of the object when it is written into the database (.txt file)
         """
-        return f"{self.name},{self.speed}\n"
+        return f"{self.name}{DELIMITER}{self.speed}\n"
 
     def update(self):
         """
@@ -189,7 +202,12 @@ class TransportData(Data):
         Prompts the user to key in the new speed and checks whether it is valid.
         """
         return prompt_input(
-            "Please input transport's speed (KM/h): ", "speed", lambda x: x > 0, func=float, skipable=skip
+            "Please input transport's speed (KM/h): ",
+            "speed",
+            "Please input a speed that's not negative",
+            lambda x: x > 0,
+            func=float,
+            skipable=skip,
         )
 
 
@@ -254,7 +272,7 @@ class LocationData(Data):
         """
         This is the string representation of the object when it is written into the database (.txt file)
         """
-        return f"{self.name},{self.latitude},{self.longitude}\n"
+        return f"{self.name}{DELIMITER}{self.latitude}{DELIMITER}{self.longitude}\n"
 
     def update(self):
         """
@@ -278,6 +296,7 @@ class LocationData(Data):
         lat_data = prompt_input(
             f"Please input location's latitude (example: 3.1319N) : ",
             "Coordinate (example: 3.1319N)",
+            "Please input the latitude of the location, followed by either N(North) or S(South) without any spaces",
             lambda x: x[1] in ["N", "S"],
             func=lambda x: (float(x[:-1]), x[-1]),
             skipable=skip,
@@ -299,6 +318,7 @@ class LocationData(Data):
         long_data = prompt_input(
             f"Please input location's longitude (example: 101.6841E) : ",
             "Coordinate (example: 101.6841E)",
+            "Please input the longitude of the location, followed by either W(West) or E(East) without any spaces",
             checker=lambda x: x[1] in ["W", "E"],
             func=lambda x: (float(x[:-1]), x[-1]),
             skipable=skip,

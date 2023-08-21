@@ -56,16 +56,28 @@ def run_simulation():
         ]
 
         distance = calculate_distance(start_loc, dest_loc)
-        time = distance / transport.speed
-        time_min = int(time % 1 * 60)
-        time_hrs = int(time)
+        time_hrs = distance / transport.speed
+
+        # using 'time_hrs % 1' to get the decimals
+        time_min = time_hrs % 1 * 60
+
+        if time_hrs < 1:
+            time_msg = f"{int(time_min)} minutes"
+
+        else:
+            time_msg = ""
+            if time_hrs > 24:
+                time_hrs %= 24
+                time_msg = f"{int(time_hrs / 24)} days "
+
+            time_msg += f"{int(time_hrs)} hours {int(time_min)} minutes"
 
         # displaying the result of calculation
         print_message(
             f"| {start_loc.name} |    ---------- {transport.name} ---------->     | {dest_loc.name} |",
             "",
             f"   distance        : {round(distance, 2)}  KM",
-            f"   estimated time  : {time_hrs} hours {time_min} minutes",
+            f"   estimated time  : {time_msg}",
             formatting=str.ljust,
         )
 
@@ -88,6 +100,7 @@ def main():
         cmd = prompt_input(
             "1: start simulation   2: location    3. Transport    4. Exit\n",
             "command",
+            "Please input either 1, 2, 3 or 4 as the command",
             lambda x: x in ["1", "2", "3", "4"],
         )
 

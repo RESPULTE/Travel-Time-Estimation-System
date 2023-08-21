@@ -16,3 +16,5 @@ INDEX_NAME = "no."
 
 PILLAR = "|+|"
 PILLAR_LEN = len(PILLAR)
+
+DELIMITER = "?"
