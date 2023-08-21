@@ -16,21 +16,23 @@ def print_message(*msg: str, formatting=str.center):
     max_msg_len = len(max(msg, key=lambda msg: len(msg)))
     msg_len = max_msg_len + MSG_PADDING
 
-    formatted_msg = "\n" + "-" * (msg_len + PILLAR_LEN * 2) + "\n"
+    formatted_msg = "\n" + "-" * (msg_len + VERTICAL_BORDER_LEN * 2) + "\n"
     if formatting is str.center:
         for m in msg:
-            formatted_msg += PILLAR + formatting(m, msg_len) + PILLAR + "\n"
+            formatted_msg += VERTICAL_BORDER + formatting(m, msg_len) + VERTICAL_BORDER + "\n"
     elif formatting is str.ljust:
         for m in msg:
             # extra padding are given to avoid the text from sticking directly to the pillars
             half_len = MSG_PADDING // 2
-            formatted_msg += PILLAR + " " * half_len + formatting(m, msg_len - half_len) + PILLAR + "\n"
+            formatted_msg += (
+                VERTICAL_BORDER + " " * half_len + formatting(m, msg_len - half_len) + VERTICAL_BORDER + "\n"
+            )
 
-    formatted_msg += "-" * (msg_len + PILLAR_LEN * 2) + "\n"
+    formatted_msg += "-" * (msg_len + VERTICAL_BORDER_LEN * 2) + "\n"
     print(formatted_msg)
 
 
-def prompt_input(prompt: str, data_type_name: str, guide: str, checker, *, func=None, skipable=False):
+def prompt_input(prompt: str, data_type_name: str, guide_msg: str, checker, *, func=None, skipable=False):
     """
     This is a convenience function that guarentees that the
     return value satisfies the "checker()" function
@@ -64,11 +66,11 @@ def prompt_input(prompt: str, data_type_name: str, guide: str, checker, *, func=
             try:
                 chosen = func(chosen)
             except Exception:
-                print_message(f"'{chosen}' is not a valid {data_type_name}", "", guide)
+                print_message(f"'{chosen}' is not a valid {data_type_name}", "", guide_msg)
                 continue
 
         if not checker(chosen):
-            print_message(f"'{chosen}' is not a valid {data_type_name}", "", guide)
+            print_message(f"'{chosen}' is not a valid {data_type_name}", "", guide_msg)
             continue
 
         return chosen

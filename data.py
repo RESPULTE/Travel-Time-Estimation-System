@@ -63,7 +63,7 @@ class Data(ABC):
             cls.print_database()
 
             cmd = prompt_input(
-                DATA_MANIPULATION_MENU,
+                "1: add    2: edit    3: delete    4. exit\n",
                 "command",
                 "Please input either 1, 2, 3 or 4 as the command",
                 lambda x: x in ["1", "2", "3", "4"],
