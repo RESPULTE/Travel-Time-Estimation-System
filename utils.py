@@ -46,7 +46,7 @@ def prompt_input(prompt: str, data_type_name: str, guide_msg: str, checker, *, f
                   the input data before it is checked by the
                   "checker()" function
 
-    2. skip: is a boolean flag that allows the user to not
+    2. skipable: is a boolean flag that allows the user to not
                pass in anything to 'skip' this input process.
                This is meant to be used during updating, in which
                user might want some part of the data to remain
@@ -94,15 +94,6 @@ def prompt_user_to_confirm(msg: str = "", ans: str = "Y"):
         )
         == ans.upper()
     )
-
-
-def read_database(filename: str, data_type):
-    try:
-        with open(filename, "r") as f:
-            return [data_type(*line.split(DELIMITER)) for line in f.read().split("\n")[:-1]]
-    except FileNotFoundError:
-        with open(filename, "w") as f:
-            return []
 
 
 def print_table(col_list: list[str], *row_list: list[str]):

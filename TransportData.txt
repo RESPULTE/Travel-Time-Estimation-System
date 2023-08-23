@@ -1,6 +1,7 @@
+Walking?5.0
 Running?10.0
 Motorbike?143.0
-Toyota Camry?200.0
 Honda Civic?180.0
+Toyota Camry?200.0
 Lamborghini Aventador?390.0
 Jet?900.0
