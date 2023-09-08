@@ -1,7 +1,7 @@
 from settings import *
 
 
-def print_message(*msg: str, formatting=str.center):
+def print_message(*msg: str, formatting=True):
     """
     This function is responsible for the pretty formatting of messages by
     adding borders and "pillars" for each line of messages
@@ -17,15 +17,15 @@ def print_message(*msg: str, formatting=str.center):
     msg_len = max_msg_len + MSG_PADDING
 
     formatted_msg = "\n" + "-" * (msg_len + VERTICAL_BORDER_LEN * 2) + "\n"
-    if formatting is str.center:
+    if formatting:
         for m in msg:
-            formatted_msg += VERTICAL_BORDER + formatting(m, msg_len) + VERTICAL_BORDER + "\n"
-    elif formatting is str.ljust:
+            formatted_msg += VERTICAL_BORDER + str.center(m, msg_len) + VERTICAL_BORDER + "\n"
+    else:
+        half_len = MSG_PADDING // 2
         for m in msg:
             # extra padding are given to avoid the text from sticking directly to the pillars
-            half_len = MSG_PADDING // 2
             formatted_msg += (
-                VERTICAL_BORDER + " " * half_len + formatting(m, msg_len - half_len) + VERTICAL_BORDER + "\n"
+                VERTICAL_BORDER + " " * half_len + str.ljust(m, msg_len - half_len) + VERTICAL_BORDER + "\n"
             )
 
     formatted_msg += "-" * (msg_len + VERTICAL_BORDER_LEN * 2) + "\n"
@@ -120,11 +120,8 @@ def print_table(col_list: list[str], *row_list: list[str]):
     for i in range(no_data_row):
         print(f"|{(str(i+1) + '.').center(INDEX_NUM_LEN)}|", end="")
 
-        try:
-            for data_list in row_list:
-                print(f"{data_list[i].center(DATA_LEN)}|", end="")
-        except IndexError:
-            print(f"{'data not found'.center(DATA_LEN)}", end="")
+        for data_list in row_list:
+            print(f"{data_list[i].center(DATA_LEN)}|", end="")
 
         print(end="\n")
     print("-" * col_len)

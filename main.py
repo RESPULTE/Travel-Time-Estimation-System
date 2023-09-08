@@ -33,27 +33,27 @@ def run_simulation():
     """
     global TransportDatabase, LocationDatabase
 
-    while True:
+    running = True
+    while running:
         # displaying the table of all locations for the user to choose
         loc_name_list = [loc.name for loc in LocationDatabase]
         print_table(["Location"], loc_name_list)
 
         # prompting the user to choose the starting and ending location
         starting_loc_num = get_valid_index(LocationDatabase, msg="starting location")
-        start_loc = LocationDatabase[starting_loc_num - 1]
-
         destination_loc_num = get_valid_index(LocationDatabase, msg="destination")
         while destination_loc_num == starting_loc_num:
             print_message("Please choose a different location!")
             destination_loc_num = get_valid_index(LocationDatabase, msg="destination")
 
-        dest_loc = LocationDatabase[destination_loc_num - 1]
-
         # displaying the table of all transport for the user to choose
-        print_database(TransportDatabase)
+        format_and_print_as_table(TransportDatabase)
 
         # prompting the user to choose the transport
         transport = TransportDatabase[get_valid_index(TransportDatabase, msg="transport of your choice") - 1]
+
+        start_loc = LocationDatabase[starting_loc_num - 1]
+        dest_loc = LocationDatabase[destination_loc_num - 1]
 
         distance = calculate_distance(start_loc, dest_loc)
         time_hrs = distance / transport.speed
@@ -76,13 +76,13 @@ def run_simulation():
         print_message(
             f"| {start_loc.name} |    ---------- {transport.name} ---------->     | {dest_loc.name} |",
             "",
-            f"   distance        : {round(distance, 2)}  KM",
+            f"   distance        : {distance:.2f}  KM",
             f"   estimated time  : {time_msg}",
-            formatting=str.ljust,
+            formatting=False,
         )
 
         if prompt_user_to_confirm("Do you want to continue the simulation?", "N"):
-            break
+            running = False
 
 
 def handle_data_manipulation(database, filename):
@@ -98,7 +98,7 @@ def handle_data_manipulation(database, filename):
     cmd = ""
 
     while cmd != "4":
-        print_database(database)
+        format_and_print_as_table(database)
 
         cmd = prompt_input(
             prompt="1: add    2: edit    3: delete    4. exit\n",
@@ -123,10 +123,10 @@ def handle_data_manipulation(database, filename):
             data = database[index - 1]
 
             # prompt the user to confirm the decision to change the selected data
-            if not prompt_user_to_confirm(f"Confirm to edit edit '{data.name}' ?"):
+            if prompt_user_to_confirm(f"Confirm to edit edit '{data.name}' ?", "N"):
                 continue
 
-            updated_data = update_data(data)
+            updated_data = update_data(data, database)
             database.append(updated_data)
             data_changed = True
 
@@ -158,14 +158,14 @@ def main():
     TransportDatabase.extend(read_database(TRANSPORTDATA_FILENAME, TransportData))
 
     print_welcome = True
-
-    while True:
+    running = True
+    while running:
         if print_welcome:
             print_message(WELCOME_MSG)
             print_welcome = False
 
         cmd = prompt_input(
-            prompt="1: start simulation   2: location    3. Transport    4. Exit\n",
+            prompt=MAIN_MENU_MSG,
             data_type_name="command",
             guide_msg="Please input either 1, 2, 3 or 4 as the command",
             checker=lambda x: x in ["1", "2", "3", "4"],
@@ -187,8 +187,8 @@ def main():
             handle_data_manipulation(LocationDatabase, LOCATIONDATA_FILENAME)
         elif cmd == "3":
             handle_data_manipulation(TransportDatabase, TRANSPORTDATA_FILENAME)
-        else:
-            break
+        elif cmd == "4":
+            running = False
 
         print_welcome = True
 

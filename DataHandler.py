@@ -1,9 +1,13 @@
 from typing import List
 from collections import namedtuple
-from enum import Enum, auto
+
 from utils import *
 from settings import *
 
+# NamedTuple functions exactly like tuple
+# for regula rtuple, indexing needs ot be used when retrieving data inside of it
+# but for namedtuple, I can set and use the my attribute's name to retrieve the data
+# This is just to make things clearer, i hate indexing haha
 TransportData = namedtuple("TransportData", ["name", "speed"])
 TransportDatabase: List[TransportData] = []
 
@@ -67,7 +71,7 @@ def create_data(data_type):
         return TransportData(get_new_name(TransportDatabase), get_new_speed())
 
 
-def print_database(database):
+def format_and_print_as_table(database):
     """
     This function is used to print out the database in a table-like format
     """
@@ -83,7 +87,7 @@ def print_database(database):
         name_list = []
         speed_list = []
         for trans in database:
-            name_list.append(f"{trans.name}")
+            name_list.append(trans.name)
             speed_list.append(f"{trans.speed:>8.2f}")
 
         print_table(["Transport", "Speed (KM/h)"], name_list, speed_list)
@@ -123,11 +127,11 @@ def read_database(filename, data_type):
     try:
         with open(filename, "r") as f:
             if data_type is TransportData:
-                for line in f.read().split("\n")[:-1]:
+                for line in f.readlines():
                     name, speed = line.split(DELIMITER)
                     database.append(data_type(name, float(speed)))
             else:
-                for line in f.read().split("\n")[:-1]:
+                for line in f.readlines():
                     name, lat, lon = line.split(DELIMITER)
                     database.append(data_type(name, float(lat), float(lon)))
     except FileNotFoundError:
@@ -137,7 +141,7 @@ def read_database(filename, data_type):
     return database
 
 
-def update_data(data):
+def update_data(data, database: list):
     """
     This function is used to update the data object's attributes by
     prompting the user to key-in the data that needs to be edited.
@@ -146,15 +150,14 @@ def update_data(data):
     then the original value will remain unchanged
     """
 
-    if isinstance(data, LocationData):
-        LocationDatabase.remove(data)
-        new_name = get_new_name(LocationDatabase, updating=True) or data.name
+    database.remove(data)
+    new_name = get_new_name(database, updating=True) or data.name
+
+    if database is LocationDatabase:
         new_latitude = get_new_latitude(updating=True) or data.latitude
         new_longitude = get_new_longitude(updating=True) or data.longitude
         updated_data = LocationData(new_name, new_latitude, new_longitude)
     else:
-        TransportDatabase.remove(data)
-        new_name = get_new_name(TransportDatabase, updating=True) or data.name
         new_speed = get_new_speed(updating=True) or data.speed
         updated_data = TransportData(new_name, new_speed)
 
