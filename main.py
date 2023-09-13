@@ -85,7 +85,7 @@ def run_simulation():
             running = False
 
 
-def handle_data_manipulation(database, filename):
+def handle_data_manipulation(database: list, filename: str):
     """
     This function is responsible for all the add/edit/delete that can be done
     to the location's data or the transport's data. It does the selected command

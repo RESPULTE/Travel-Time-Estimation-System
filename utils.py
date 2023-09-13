@@ -6,7 +6,8 @@ def print_message(*msg: str, formatting=True):
     This function is responsible for the pretty formatting of messages by
     adding borders and "pillars" for each line of messages
 
-    This function takes in any number of strings, and prints each of them out
+    This function takes in any number of strings due to the "*"
+    symbol specified at the argument, and prints each of them out
     line-by-line
 
     Optional Argument:
@@ -59,21 +60,30 @@ def prompt_input(prompt: str, data_type_name: str, guide_msg: str, checker, *, f
     while True:
         chosen = input(f"{prompt}")
 
+        # an additional variable is used here, as the data inputted
+        # might be altered by "func()", which can be hard to
+        # understand for users when an error occurs
+        to_return = chosen
+
         if skipable and chosen == "":
             return None
 
         if func != None:
             try:
-                chosen = func(chosen)
+                to_return = func(chosen)
             except Exception:
+                # This will be executed if ANY error occurs when trying to convert the data inputted by the user
                 print_message(f"'{chosen}' is not a valid {data_type_name}", "", guide_msg)
+
+                # "Continue" resets the loop to the very beginning, skipping all the code below this keyword
                 continue
 
-        if not checker(chosen):
+        # If the data inputted by the user does not pass the requirement
+        if not checker(to_return):
             print_message(f"'{chosen}' is not a valid {data_type_name}", "", guide_msg)
             continue
 
-        return chosen
+        return to_return
 
 
 def prompt_user_to_confirm(msg: str = "", ans: str = "Y"):
@@ -96,11 +106,13 @@ def prompt_user_to_confirm(msg: str = "", ans: str = "Y"):
     )
 
 
-def print_table(col_list: list[str], *row_list: list[str]):
+def print_table(col_list: list, *row_list: list):
     """
     This function is responsible to print out data in a table-like format.
+
     This function takes in a list of string that serves as its header. and a
-    variable amount of list as its rows
+    variable amount of list as its rows due to the "*" symbol specified at the
+    argument
 
     P.S: The Number of element in each row_list MUST match the col_list, or else
          "Data not found" would be displayed at its place.

@@ -1,21 +1,20 @@
-from typing import List
 from collections import namedtuple
 
 from utils import *
 from settings import *
 
 # NamedTuple functions exactly like tuple
-# for regula rtuple, indexing needs ot be used when retrieving data inside of it
+# for regular tuple, indexing needs to be used when retrieving data inside of it
 # but for namedtuple, I can set and use the my attribute's name to retrieve the data
 # This is just to make things clearer, i hate indexing haha
 TransportData = namedtuple("TransportData", ["name", "speed"])
-TransportDatabase: List[TransportData] = []
+TransportDatabase = []
 
 LocationData = namedtuple("LocationData", ["name", "latitude", "longitude"])
-LocationDatabase: List[LocationData] = []
+LocationDatabase = []
 
 
-def write_database_to_file(database, filename):
+def write_database_to_file(database: list, filename: str):
     """
     Just a simple function to write all data in a given database into a given file
     """
@@ -29,7 +28,7 @@ def write_database_to_file(database, filename):
                 f.write(f"{data.name}{DELIMITER}{data.speed}\n")
 
 
-def get_new_name(database, updating=False):
+def get_new_name(database: list, updating=False):
     """
     This function prompts the user to give a valid name for the new data that does not exist in the database
     """
@@ -46,7 +45,7 @@ def get_new_name(database, updating=False):
     )
 
 
-def get_valid_index(database, msg: str = ""):
+def get_valid_index(database: list, msg: str = ""):
     """
     This function prompts the user to give a valid index of a data that exists in within the database
     in other words, index of existing data
@@ -71,7 +70,7 @@ def create_data(data_type):
         return TransportData(get_new_name(TransportDatabase), get_new_speed())
 
 
-def format_and_print_as_table(database):
+def format_and_print_as_table(database: list):
     """
     This function is used to print out the database in a table-like format
     """
@@ -141,7 +140,7 @@ def read_database(filename, data_type):
     return database
 
 
-def update_data(data, database: list):
+def update_data(data: TransportData | LocationData, database: list):
     """
     This function is used to update the data object's attributes by
     prompting the user to key-in the data that needs to be edited.
@@ -171,7 +170,7 @@ def get_new_speed(updating=False):
     return prompt_input(
         prompt="Please input transport's speed (KM/h): ",
         data_type_name="speed",
-        guide_msg="Please input a speed that's not negative",
+        guide_msg="Please input a speed that's a non-negative number",
         checker=lambda x: x > 0,
         func=float,
         skipable=updating,
@@ -187,8 +186,8 @@ def get_new_latitude(updating=False):
     lat_data = prompt_input(
         prompt="Please input location's latitude (example: 3.1319N) : ",
         data_type_name="Coordinate (example: 3.1319N)",
-        guide_msg="Please input the latitude of the location, followed by either N(North) or S(South) without any spaces",
-        checker=lambda x: x[1] in ["N", "S"],
+        guide_msg="Please input the latitude of the location, which should be between 0 and 90, followed by either N(North) or S(South) without any spaces",
+        checker=lambda x: 0 <= x[0] <= 90 and x[1] in ["N", "S"],
         func=lambda x: (float(x[:-1]), x[-1]),
         skipable=updating,
     )
@@ -213,8 +212,8 @@ def get_new_longitude(updating=False):
     long_data = prompt_input(
         prompt=f"Please input location's longitude (example: 101.6841E) : ",
         data_type_name="Coordinate (example: 101.6841E)",
-        guide_msg="Please input the longitude of the location, followed by either W(West) or E(East) without any spaces",
-        checker=lambda x: x[1] in ["W", "E"],
+        guide_msg="Please input the longitude of the location, which should be between 0 and 180, followed by either W(West) or E(East) without any spaces",
+        checker=lambda x: x[1] in ["W", "E"] and 0 <= x[0] <= 180,
         func=lambda x: (float(x[:-1]), x[-1]),
         skipable=updating,
     )
