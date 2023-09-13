@@ -70,7 +70,7 @@ def create_data(data_type):
         return TransportData(get_new_name(TransportDatabase), get_new_speed())
 
 
-def format_and_print_as_table(database: list):
+def print_as_table(database: list):
     """
     This function is used to print out the database in a table-like format
     """

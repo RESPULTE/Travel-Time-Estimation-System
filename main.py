@@ -47,7 +47,7 @@ def run_simulation():
             destination_loc_num = get_valid_index(LocationDatabase, msg="destination")
 
         # displaying the table of all transport for the user to choose
-        format_and_print_as_table(TransportDatabase)
+        print_as_table(TransportDatabase)
 
         # prompting the user to choose the transport
         transport = TransportDatabase[get_valid_index(TransportDatabase, msg="transport of your choice") - 1]
@@ -98,7 +98,7 @@ def handle_data_manipulation(database: list, filename: str):
     cmd = ""
 
     while cmd != "4":
-        format_and_print_as_table(database)
+        print_as_table(database)
 
         cmd = prompt_input(
             prompt="1: add    2: edit    3: delete    4. exit\n",
