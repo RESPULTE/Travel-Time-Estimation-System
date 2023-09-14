@@ -123,7 +123,7 @@ def handle_data_manipulation(database: list, filename: str):
             data = database[index - 1]
 
             # prompt the user to confirm the decision to change the selected data
-            if prompt_user_to_confirm(f"Confirm to edit edit '{data.name}' ?", "N"):
+            if not prompt_user_to_confirm(f"Confirm to edit edit '{data.name}' ?"):
                 continue
 
             updated_data = update_data(data, database)
