@@ -33,6 +33,39 @@ def print_message(*msg: str, formatting=True):
     print(formatted_msg)
 
 
+def print_table(col_list: list, *row_list: list):
+    """
+    This function is responsible to print out data in a table-like format.
+
+    This function takes in a list of string that serves as its header. and a
+    variable amount of list as its rows due to the "*" symbol specified at the
+    argument
+
+    P.S: The Number of element in each row_list MUST match the col_list, or else
+         "Data not found" would be displayed at its place.
+    """
+    no_col = len(col_list)
+    no_vertical_line = no_col + 2
+    col_len = INDEX_NUM_LEN + DATA_LEN * no_col + no_vertical_line
+
+    print("-" * col_len)
+    print(f"|{INDEX_NAME.center(INDEX_NUM_LEN)}|", end="")
+    for col_name in col_list:
+        print(f"{col_name.center(DATA_LEN)}|", end="")
+    print(end="\n")
+    print("-" * col_len)
+
+    no_data_row = len(max(row_list, key=lambda x: len(x)))
+    for i in range(no_data_row):
+        print(f"|{(str(i+1) + '.').center(INDEX_NUM_LEN)}|", end="")
+
+        for data_list in row_list:
+            print(f"{data_list[i].center(DATA_LEN)}|", end="")
+
+        print(end="\n")
+    print("-" * col_len)
+
+
 def prompt_input(prompt: str, data_type_name: str, guide_msg: str, checker, *, func=None, skipable=False):
     """
     This is a convenience function that guarentees that the
@@ -104,36 +137,3 @@ def prompt_user_to_confirm(msg: str = "", ans: str = "Y"):
         )
         == ans.upper()
     )
-
-
-def print_table(col_list: list, *row_list: list):
-    """
-    This function is responsible to print out data in a table-like format.
-
-    This function takes in a list of string that serves as its header. and a
-    variable amount of list as its rows due to the "*" symbol specified at the
-    argument
-
-    P.S: The Number of element in each row_list MUST match the col_list, or else
-         "Data not found" would be displayed at its place.
-    """
-    no_col = len(col_list)
-    no_vertical_line = no_col + 2
-    col_len = INDEX_NUM_LEN + DATA_LEN * no_col + no_vertical_line
-
-    print("-" * col_len)
-    print(f"|{INDEX_NAME.center(INDEX_NUM_LEN)}|", end="")
-    for col_name in col_list:
-        print(f"{col_name.center(DATA_LEN)}|", end="")
-    print(end="\n")
-    print("-" * col_len)
-
-    no_data_row = len(max(row_list, key=lambda x: len(x)))
-    for i in range(no_data_row):
-        print(f"|{(str(i+1) + '.').center(INDEX_NUM_LEN)}|", end="")
-
-        for data_list in row_list:
-            print(f"{data_list[i].center(DATA_LEN)}|", end="")
-
-        print(end="\n")
-    print("-" * col_len)
